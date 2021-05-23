@@ -1,3 +1,7 @@
+# Course: Introduction to the Tidyverse
+# Autor: Thiago Balbo Batista
+# Ano : 2021
+
 # Requesting the libraries 'gapminder', 'dplyr' and ''ggplot2':
 
 library('gapminder')
