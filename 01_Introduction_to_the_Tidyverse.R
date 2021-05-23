@@ -14,7 +14,7 @@ df <- gapminder
 
 attach(df)
 
-# CHAPTER 1 - DATABASE WRANGLING
+# CHAPTER 1 - DATA WRANGLING
 
 ##Filtering the database by:
 
