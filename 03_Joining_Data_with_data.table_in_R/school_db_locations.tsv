@@ -1,0 +1,17 @@
+class,semester,building,room
+English,1,Block B,Room 103
+Mathematics,1,Block C,Room 104
+Art,1,Block B,Room 102
+Programming,1,Block A,Room 102
+History,1,Block B,Room 101
+Geography,1,Block A,Room 101
+Politics,1,Block A,Room 104
+Language,1,Block C,Room 103
+English,2,Block A,Room 104
+Mathematics,2,Block A,Room 102
+Art,2,Block B,Room 102
+Programming,2,Block C,Room 104
+History,2,Block A,Room 103
+Geography,2,Block C,Room 103
+Politics,2,Block C,Room 102
+Language,2,Block B,Room 103
