@@ -1,0 +1,583 @@
+---
+title: "Joining Data with data.table in R"
+author: "Thiago Balbo Batista"
+date: "18/06/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Libraries
+
+
+```{r library, echo=FALSE}
+library('data.table')
+library('dplyr')
+library('readr')
+```
+
+## Import datasets:
+
+```{r import, echo=FALSE}
+
+imdb <- as.data.table(read_csv("https://assets.datacamp.com/production/repositories/1583/datasets/49bfe9dc4e96e0b38724839b641c4dbea82b6126/imdb_ratings.csv"))
+
+netflix <- as.data.table(read_csv("https://assets.datacamp.com/production/repositories/1583/datasets/21a33688d76aa24f5f4e8ed26e764d421fd484e6/netflix_2017.csv"))
+
+area <- as.data.table(read_csv("C:/Users/HP/Desktop/Portfolio/Datacamp/Datacamp_R_Language/australia_area.csv", 
+    col_types = cols(area_km2 = col_number(), 
+        percentage = col_number())))
+
+capitals <- as.data.table(read_csv("C:/Users/HP/Desktop/Portfolio/Datacamp/Datacamp_R_Language/australia_capitals.csv"))
+                               
+population <- as.data.table(read_csv("C:/Users/HP/Desktop/Portfolio/Datacamp/Datacamp_R_Language/australia_cities_top20.csv", 
+    col_types = cols(population = col_number(), 
+        percentage = col_number())))
+
+continents <- as.data.table(read_csv("C:/Users/HP/Desktop/Portfolio/Datacamp/Datacamp_R_Language/continents.csv"))
+
+life_exp <- as.data.table(read_csv("C:/Users/HP/Desktop/Portfolio/Datacamp/Datacamp_R_Language/gapminder_life_expectancy_2010.csv"))
+
+
+guardians <- as.data.table(read_csv("school_db_guardians.tsv"))
+
+locations <- as.data.table(read_csv("school_db_locations.tsv"))
+
+students <- as.data.table(read_csv("school_db_students.tsv"))
+
+subjects <- as.data.table(read_csv("school_db_subjects.tsv"))
+
+teachers <- as.data.table(read_csv("school_db_teachers.tsv"))
+
+cardio <- as.data.table(read_csv("affymetrix_chd_genes.csv"))
+
+heart <-  as.data.table(read_csv("illumina_chd_genes.csv"))
+
+framingham <- as.data.table(read_csv("framingham_chd_genes.csv"))
+
+ebola_W50 <- as.data.table(read_csv("ebola_2014_W50.csv"))
+
+ebola_W51 <- as.data.table(read_csv("ebola_2014_W51.csv"))
+
+ebola_W52 <- as.data.table(read_csv("ebola_2014_W52.csv"))
+
+africa <- as.data.table(read_csv("gdp_africa_2000.csv"))
+
+asia <- as.data.table(read_csv("gdp_asia_2000.csv"))
+
+europe <- as.data.table(read_csv("gdp_europe_2000.csv"))
+
+north_america <- as.data.table(read_csv("gdp_north_america_2000.csv"))
+
+oceania <- as.data.table(read_csv("gdp_oceania_2000.csv"))
+
+south_america <- as.data.table(read_csv("gdp_south_america_2000.csv"))
+
+middle_east <- as.data.table(read_csv("gdp_middle_east_2000.csv"))
+
+gdp_per_capita <- as.data.table(read_csv("gdp_per_capita_oceania.csv"))
+
+```
+
+## CHAPTER 1 - JOINING MULTIPLE DATA.TABLES
+
+### Checking tables structures in the R session:
+
+
+```{r tables, echo=FALSE}
+
+# What data.tables are in my R session?
+tables()
+
+# View the first six rows 
+head(netflix)
+head(imdb)
+
+# Print the structure
+str(netflix)
+str(imdb)
+
+```
+
+### Inner join:
+
+
+```{r inner join, echo=FALSE}
+
+merge(netflix, imdb, by = 'title')
+
+```
+
+### Full join:
+
+```{r full join, echo=FALSE}
+
+merge(imdb, netflix, by = 'title', all = TRUE)
+
+```
+
+
+### Left join:
+
+```{r left join, echo=FALSE}
+
+merge(netflix, imdb, by = 'title', all.x = TRUE)
+
+```
+
+
+### Right join:
+
+```{r right join, echo=FALSE}
+
+merge(netflix, imdb, by = 'title', all.y = TRUE)
+
+```
+
+### Left join of imdb:
+
+```{r right join, echo=FALSE}
+
+merge(imdb, netflix, by = 'title', all.x = TRUE)
+
+```
+
+
+### Mastering simple joins:
+
+```{r join 3 tables, echo=FALSE}
+
+# Identify the key for joining capitals and population
+capitals_population_key <- 'city'
+
+# Left join population to capitals
+capital_pop <- merge(capitals,population, by = capitals_population_key, all.x = TRUE)
+capital_pop
+
+# Identify the key for joining capital_pop and area
+capital_pop_area_key <- 'state'
+
+# Inner join area to capital pop
+australia_stats <- merge(capital_pop, area, by = capital_pop_area_key)
+
+# Print the final result
+australia_stats
+
+```
+
+## CHAPTER 2 - JOINS USING DATA.TABLE SYNTAX
+
+### Right join with the data.table syntax:
+
+```{r right join, echo=FALSE}
+
+# Right join population to capitals using data.table syntax
+capitals[population, on = .(city)]
+
+```
+
+### Right join with the data.table syntax:
+
+```{r right join, echo=FALSE}
+
+merge(capitals, population, by = "city", all.y = TRUE)
+
+```
+
+### Inner join:
+
+```{r inner join, echo=FALSE}
+
+# Inner join with the data.table syntax
+capitals[population, on = .(city), nomatch = 0]
+
+```
+
+### Anti-join:
+
+```{r anti-join, echo=FALSE}
+
+
+# # Anti-join capitals to population
+ population[!capitals, on = .(city)]
+
+# Anti-join capitals to area
+area[!capitals, on = .(state)]
+
+```
+
+### Setting keys:
+
+
+```{r inner join, echo=FALSE}
+
+
+# Set the keys
+setkey(netflix, 'title')
+setkey(imdb, 'title')
+
+# Inner join
+netflix[imdb, nomatch = 0]
+
+
+```
+
+### Getting keys:
+
+```{r getting keys, echo=FALSE}
+
+# Check for keys
+haskey(netflix)
+haskey(imdb)
+
+# Find the key
+the_key <- key(netflix)
+
+# Set the key for the other data.table
+setkeyv(imdb, the_key)
+
+```
+
+
+
+### Exploring the Australian population:
+
+```{r Exploring the Australian population, echo=FALSE}
+
+# Inner join capitals to population
+population[capitals, on = .(city), nomatch = 0]
+
+# Join and sum
+population[capitals, on = .(city), nomatch = 0,
+           j = sum(population)]
+
+# Join and sum
+population[capitals, on = .(city), nomatch = 0,
+           j = sum(percentage)]
+
+
+```
+### Finding multiple matches:
+
+
+```{r multiple matches, echo=FALSE}
+
+# How many continents is each country listed in?
+continents[life_exp, on = .(country), .N, 
+    by = .EACHI]
+
+# How many continents is each country listed in?
+continents[life_exp, on = .(country), .N, 
+    by = .EACHI][N > 1]
+
+```
+
+### Exploring world life expectancy:
+
+```{r mean life expectancy, echo=FALSE}
+
+# Calculate average life expectancy per continent:
+avg_life_expectancy <- continents[life_exp, on = .(country), 
+                                  nomatch = 0][, j = mean(life_expectancy), 
+                                       by = 'continent']
+avg_life_expectancy
+
+
+```
+
+## CHAPTER 3 - DIAGNOSING AND FIXING COMMON JOIN PROBLEMS
+
+### Keys with different names:
+
+```{r different keys, echo=FALSE}
+
+# Full join
+merge(guardians, students, by = 'name', all = TRUE)
+
+# Left join
+merge(students, guardians, by = "name", all.x = TRUE)
+
+# Inner join
+students[guardians, on = .(name), nomatch = 0]
+
+# What are the correct join key columns?
+students[guardians, on = .(guardian = name), nomatch = 0]
+
+```
+
+### Multi-column keys:
+
+```{r multi-column keys, echo=FALSE}
+
+colnames(subjects)[3] <- 'subject'
+
+colnames(locations)[1] <- 'subject'
+
+# Right join
+
+subjects[locations, on = .(subject, semester)]
+
+# Structure 
+str(subjects)
+str(locations)
+
+# Does semester have the same class? 
+same_class <- FALSE
+
+
+# Fix the column class
+locations[, semester := as.integer(semester)]
+
+# Right join
+subjects[locations, on = .(subject, semester)]
+
+
+```
+
+
+### Multi-key, single-key:
+
+```{r Multi-key/single-key, echo=FALSE}
+
+# Identify and set the keys
+join_key <-  'subject'
+
+# Right join
+teachers[locations, on = join_key]
+
+```
+
+### Column name suffixes:
+
+```{r Column name suffixes, echo=FALSE}
+
+# Inner join
+capital_pop <- merge(capitals, population, by = 'city')
+
+# Left join
+merge(capital_pop, area, by = 'state', all.x = TRUE,  suffixes = c('.pop', '.area')))
+
+```
+
+### Joining a data.frame:
+
+```{r Joining a data.frame, echo=FALSE}
+
+# Convert netflix to a data.table
+netflix_dt <- as.data.table(netflix, keep.rownames = "series")
+netflix_dt
+
+# Right join
+imdb[netflix_dt, on = .(title = series)]
+
+```
+
+### Joining with missing values:
+
+```{r Joining with missing values, echo=FALSE}
+
+# Try an inner join
+merge(heart, cardio, by = "gene", allow.cartesian = TRUE)
+
+# Filter missing values
+heart_2 <- heart[!is.na(gene)]
+cardio_2 <- cardio[!is.na(gene)]
+
+# Inner join the filtered data.tables
+merge(heart_2, cardio_2, by = "gene")
+
+```
+
+### Filtering duplicates:
+
+```{r Filtering duplicates, echo=FALSE}
+
+# Keep only the last probe for each gene
+heart_3 <- unique(heart_2, by = "gene", fromLast = TRUE)
+cardio_3 <- unique(cardio_2, by = "gene", fromLast = TRUE)
+
+# Inner join
+reproducible <- merge(heart_3, cardio_3, by = "gene", suffixes = c(".heart", ".cardio"))
+reproducible
+
+```
+
+### Joining and filtering duplicates
+
+
+```{r Joining and filtering duplicates, echo=FALSE}
+
+# Right join taking the first match
+heart_2[framingham, on = .(gene), mult = "first"]
+
+# Anti-join
+reproducible[!framingham, on = .(gene)]
+
+```
+
+## CHAPTER 4 - CONCATENATING AND RESHAPING DATA.TABLES
+
+### Concatenating data.table variables:
+
+```{r Joining and filtering duplicates, echo=FALSE}
+
+# Concatenate case numbers from weeks 50 and 51
+rbind(ebola_W50, ebola_W51)
+
+# Concatenate case numbers from all three weeks
+rbind(ebola_W50, ebola_W51, ebola_W52)
+
+# Modify the code
+rbind(ebola_W50, ebola_W51, ebola_W52)
+
+rbind(ebola_W50, ebola_W51, ebola_W52, fill = TRUE)
+
+```
+
+### Concatenating a list of data.tables:
+
+
+```{r Concatenate its data.tables, echo=FALSE}
+
+gdp <- list(africa, asia, europe, north_america, oceania, south_america)
+
+# Concatenate its data.tables
+gdp_all_1 <- rbindlist(gdp)
+
+# Concatenate its data.tables
+gdp_all_2 <- rbindlist(gdp, idcol = 'continent')
+
+# Run this code to inspect gdp_all_2
+str(gdp_all_2)
+gdp_all_2[95:105]
+
+# Fix the problem
+gdp_all_3 <- rbindlist(gdp, idcol = "continent", use.names = TRUE)
+gdp_all_3
+
+```
+
+### Identifying observations shared by multiple tables:
+
+
+
+```{r Identifying observations shared by multiple tables, echo=FALSE}
+
+# Obtain countries in both Asia and Europe
+fintersect(gdp$asia, gdp$europe)
+
+# Concatenate all data tables
+gdp_all <- rbindlist(gdp)
+
+# Find all countries that span multiple continents
+gdp_all[duplicated(gdp_all)]
+
+
+
+```
+
+
+### Removing duplicates while combining tables:
+
+```{r Removing duplicates while combining tables:, echo=FALSE}
+
+# Get all countries in either Asia or Europe
+funion(gdp$asia, gdp$europe)
+
+# Concatenate all data tables
+gdp_all <- rbindlist(gdp)
+
+# Print all unique countries
+unique(gdp_all)
+
+```
+
+
+### Identifying observations unique to a table:
+
+
+```{r Removing duplicates while combining tables:, echo=FALSE}
+
+# Which countries are in Africa but not considered part of the middle east?
+fsetdiff(gdp$africa, middle_east)
+
+# Which countries are in Asia but not considered part of the middle east?
+fsetdiff(gdp$asia, middle_east)
+
+# Which countries are in Europe but not considered part of the middle east?
+fsetdiff(gdp$europe, middle_east)
+
+```
+
+### Melting a wide table:
+
+```{r Melting a wide table, echo=FALSE}
+
+# Print gdp_per_capita
+gdp_per_capita
+
+# Reshape gdp_per_capita to the long format
+melt(gdp_per_capita, id.vars = "year")
+# 
+# Within your call to melt(), name the new "variable" column as "country" and the new "value" column as "gdp_pc".
+# Rename the new columns
+melt(gdp_per_capita, id.vars = "year", 
+     variable.name = "country", value.name = "gdp_pc")
+
+```
+
+
+### More melting:
+
+```{r more melting, echo=FALSE}
+
+# Print ebola_wide
+ebola_wide
+
+# Stack Week_50 and Week_51
+melt(ebola_wide, measure.vars = c("Week_50", "Week_51"), 
+     variable.name = "period", value.name = "cases")
+     
+# Modify the code
+melt(ebola_wide, measure.vars = c("Week_50", "Week_51"), 
+     variable.name = "period", value.name = "cases", 
+     id.vars = "Location")     
+     
+```
+
+### Casting a long table:
+
+
+```{r Casting a long table, echo=FALSE}
+
+# Split the population column by year
+dcast(gdp_oceania, formula = country ~ year, value.var = "population")
+
+
+# Split the gdp column by country
+dcast(gdp_oceania, formula = year ~ country, value.var = "gdp")
+
+```
+
+
+### Casting multiple tables:
+
+
+```{r Casting multiple tables, echo=FALSE}
+
+# Split the gdp and population columns by year
+dcast(gdp_oceania, formula = country ~ year, value.var = c("gdp", "population")) 
+
+# Reshape from wide to long format
+wide <- dcast(gdp_oceania, formula = country ~ year, value.var = c("gdp", "population"))
+
+# convert to a matrix
+as.matrix(wide, rownames = "country")
+
+# Modify your previous code
+dcast(gdp_oceania, formula = country + continent ~ year, value.var = c("gdp", "population"))
+
+```
+
