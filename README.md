@@ -1,4 +1,4 @@
-# Data Science and Data Analysis Courses 
+# Data Science Courses
  [About](#about) | [Technology](#technology) | [Courses](#courses)
 
 
