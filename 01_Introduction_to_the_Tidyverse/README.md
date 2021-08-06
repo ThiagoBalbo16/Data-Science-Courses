@@ -1,4 +1,6 @@
-### 01 - Introduction to the Tidyverse
+# 01 - Introduction to the Tidyverse
+
+![](https://www.datacamp.com/datacamp.png?v=20102020)
 
 #### Course description in Datacamp
 
