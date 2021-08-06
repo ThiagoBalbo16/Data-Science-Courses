@@ -1,4 +1,6 @@
-### 04 - SQL for Data Science
+# 04 - SQL for Data Science
+
+![](https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcTNPF5KLO2PcqV37_CHxlxn8XJPdhl69yGLmrwJfvTiybbY3hhH)
 
 #### Course description in Coursera
 
