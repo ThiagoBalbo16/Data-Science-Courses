@@ -1,4 +1,6 @@
-### 03 - Joining data with data.table in R
+# 03 - Joining data with data.table in R
+
+![](https://www.datacamp.com/datacamp.png?v=20102020)
 
 #### Course description in Datacamp
 <div align="justify">
