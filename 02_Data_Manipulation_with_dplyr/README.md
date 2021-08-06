@@ -1,4 +1,6 @@
-### 02 - Data Manipulation with dplyr
+# 02 - Data Manipulation with dplyr
+
+![](https://www.datacamp.com/datacamp.png?v=20102020)
 
 #### Course description in Datacamp
 
